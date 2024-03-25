@@ -1,0 +1,60 @@
+name: lotus_food_totem
+description: "A new Flutter project."
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_clisitef:
+    path: packages/flutter_clisitef 
+    
+  cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  get: ^4.6.6
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.1
+  cached_network_image: ^3.3.1
+  carousel_slider: ^4.2.1
+  smooth_page_indicator: ^1.1.0
+  logger: ^2.1.0
+  cherry_toast: ^1.9.1
+  flutter_cache_manager: ^3.3.1
+  flutter_staggered_animations: ^1.1.1
+  intl: ^0.18.1
+  font_awesome_flutter: ^10.7.0
+  flutter_spinkit: ^5.2.0
+
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  flutter_test:
+    sdk: flutter
+  isar_generator: ^3.1.0+1
+
+ 
+  flutter_lints: ^2.0.0
+
+
+flutter:
+
+ 
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  
+  fonts:
+    - family: LilitaOne
+      fonts:
+        - asset: assets/fonts/LilitaOne-Regular.ttf
+ 
