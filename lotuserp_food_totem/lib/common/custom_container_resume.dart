@@ -102,7 +102,8 @@ class CustomContainerResume extends StatelessWidget {
 
     // Constrói o corpo
     Widget _buildBodyIsVisible() {
-      return Container(
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         width: size.width,
         height: menuController.isExpanded.value
             ? size.height * 0.5

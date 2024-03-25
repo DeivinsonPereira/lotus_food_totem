@@ -137,6 +137,9 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
 
       if (event.event == DataEvents.pressAnyKey) {
         controller.lastMsgCashierCustomer = event.buffer;
+        Future.delayed(const Duration(seconds: 3), () {
+          Get.back();
+        });
       }
 
       if (event.event == DataEvents.abortRequest) {
@@ -272,7 +275,7 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
   }
 
   void operacoes() async {
-    var xmlNfce = await PostNfce().postNfce(context, widget.paymentTypeNFCE);
+    /* var xmlNfce = await PostNfce().postNfce(context, widget.paymentTypeNFCE);
     if (xmlNfce.isNotEmpty) {
       for (var i = 0; i < 6; i++) {
         Get.back();
@@ -288,7 +291,7 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
             },
           ),
         );
-      }
+      }*/
 
     var printCard = await PrintTransactionCard()
         .printTEF(controller.pdv.cliSiTefResp.viaCliente);
@@ -312,8 +315,8 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
           },
         ),
       );
+      //  }
     }
-     }
   }
 
   void cancelCurrentTransaction() async {

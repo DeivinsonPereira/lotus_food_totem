@@ -70,7 +70,7 @@ class CustomCardResume extends StatelessWidget {
         children: [
           Text(
             '${itemEscolhido['produto'].produto_descricao}',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
           ),
           Text(
               'R\$ ${FormatNumbers.formatNumbertoString(itemEscolhido['produto'].pvenda)}'),
@@ -90,9 +90,9 @@ class CustomCardResume extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
         child: Column(
           children: [
-            _buildButtonsLine(),
             _buildNameAndPriceProduct(),
             _buildNameAndPriceComplements(),
+            _buildButtonsLine(),
           ],
         ),
       );
