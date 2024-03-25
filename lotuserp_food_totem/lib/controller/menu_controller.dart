@@ -20,6 +20,7 @@ class MenuPageController extends GetxController {
   var complementosSelecionados = [].obs;
   var carrinho = [].obs;
   var total = 0.0.obs;
+  var isExpanded = false.obs;
 
   // Modifica a opção da refeição ( 0 - levar, 1 - comer aqui)
   void setMealOption(int value) {
@@ -30,6 +31,19 @@ class MenuPageController extends GetxController {
   // Modifica o total
   void setTotal(double value) {
     total.value = value;
+    update();
+  }
+
+  // Modifica a visibilidade
+  void toggleExpanded() {
+    isExpanded.value = !isExpanded.value;
+    print(isExpanded.value);
+    update();
+  }
+
+  // Modifica a visibilidade para falso
+  void toggleExpandedToFalse() {
+    isExpanded.value = false;
     update();
   }
 

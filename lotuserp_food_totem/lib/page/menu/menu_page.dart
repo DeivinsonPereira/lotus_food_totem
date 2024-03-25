@@ -33,6 +33,7 @@ class MenuPage extends StatelessWidget {
             grupo grupoSelecionado = menuController.grupos[index];
             return GestureDetector(
               onTap: () {
+                menuController.toggleExpandedToFalse();
                 menuController.updateGrupoSelecionado(index);
                 menuController.updateProdutosEscolhidos();
               },
@@ -74,6 +75,7 @@ class MenuPage extends StatelessWidget {
             var produtoSelecionado = menuController.produtosEscolhidos[index];
             return GestureDetector(
               onTap: () {
+                menuController.toggleExpandedToFalse();
                 menuController.complementosFiltrados.clear();
                 menuController.updateComplementosFiltrados(produtoSelecionado);
                 menuController.clearComplementoSelecionado();
@@ -104,9 +106,11 @@ class MenuPage extends StatelessWidget {
             Get.back();
             Get.back();
             menuController.clearAll();
+            menuController.toggleExpandedToFalse();
           },
           functionContinueButton: () {
             CarrinhoIsEmpty().verifyCarrinhoToCartShop(context);
+            menuController.toggleExpandedToFalse();
           });
     }
 
@@ -138,7 +142,7 @@ class MenuPage extends StatelessWidget {
                     ),
                   ),
                   // Resumo do pedido
-                  CustomContainerResume(size: size),
+                  CustomContainerResume(size: size, isVisible: true),
                   _buildButtons(),
                 ],
               ),

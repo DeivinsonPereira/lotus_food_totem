@@ -18,7 +18,7 @@ class CartShop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Dependencies.menuController();
+    var menuController = Dependencies.menuController();
     Size size = Get.size;
     Dependencies.paymentController();
 
@@ -29,12 +29,15 @@ class CartShop extends StatelessWidget {
         textContinueButton: 'Confirmar',
         colorBackButton: CustomColors.informationBox,
         colorContinueButton: CustomColors.confirmButtonColor,
-        functionBackButton: () => Get.back(),
+        functionBackButton: () {
+          Get.back();
+          menuController.toggleExpandedToFalse();
+        },
         functionContinueButton: () {
           CarrinhoIsEmpty().verifyCarrinhoToPaymentForms(context);
+          menuController.toggleExpandedToFalse();
         },
       );
-
     }
 
     // Constrói a lista de itens no carrinho

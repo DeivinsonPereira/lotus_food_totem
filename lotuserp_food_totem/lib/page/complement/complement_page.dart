@@ -146,6 +146,7 @@ class ComplementPage extends StatelessWidget {
           functionContinueButton: () {
             if (isEdit == false) {
               menuController.updateCarrinho(produtoEscolhido);
+              menuController.clearComplementoSelecionado();
               Get.back();
             } else {
               menuController.updateCarrinhoCartShop(produtoEscolhido, index!);
