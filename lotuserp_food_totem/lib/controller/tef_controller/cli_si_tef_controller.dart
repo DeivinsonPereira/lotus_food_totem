@@ -19,6 +19,7 @@ class CliSiTefController extends GetxController {
   var lastMsgCashierCustomer = ''.obs;
   var showAbortButton = false.obs;
   var abortTransaction = false.obs;
+  var transaction = false.obs;
 
   List<String> dataReceived = [];
 
@@ -51,6 +52,11 @@ class CliSiTefController extends GetxController {
     SiTefService().configureCliSitefCallbacks();
   }
   */
+
+  void setTransaction(bool value) {
+    transaction.value = value;
+    update();
+  }
 
   // Preenche o campo PinPadInfo
   void setPinPadInfo(String text) {

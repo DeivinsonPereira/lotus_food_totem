@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../../../common/components/custom_text_style.dart';
+import '../../../common/custom_cherry.dart';
 import '../../../controller/config_controller.dart';
 import '../../../controller/payment_controller.dart';
 import '../../../core/app_colors.dart';
@@ -48,6 +49,7 @@ class CliSiTefExemple extends StatefulWidget {
 class _CliSiTefExempleState extends State<CliSiTefExemple> {
   MainController controller = MainController();
   var menuController = Dependencies.menuController();
+  var clisitefController = Dependencies.cliSiTefController();
   Logger logger = Logger();
   bool isSecondFill = false;
 
@@ -60,7 +62,7 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
           .getTefIp(context, widget.paymentController.paymentForm[0]),
       codigoLoja: widget.paymentController.paymentForm[0].tef_loja,
       numeroTerminal: widget.paymentController.paymentForm[0].tef_terminal,
-      cnpjAutomacao: '08809908000152', // CNPJ VISTA TECNOLOGIA
+      cnpjAutomacao: '28236686000133', // CNPJ VISTA TECNOLOGIA
       cnpjLoja: RemoveSpecialCharacter()
           .remove(widget.paymentController.paymentForm[0].tef_cnpj_empresa),
       tipoPinPad: TipoPinPad.usb,
@@ -81,6 +83,7 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
 
   Future<void> configureCliSitefCallbacks() async {
     controller.pdv.pinPadStream.stream.listen((PinPadInformation event) {
+      if (!mounted) return;
       setState(() {
         PinPadInformation pinPad = event;
         controller.pinPadInfo =
@@ -122,7 +125,7 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
       if (event.event == DataEvents.confirmation) {
         controller.lastMsgCashierCustomer = 'Transação Cancelada';
         Future.delayed(const Duration(seconds: 2), () {
-          controller.pdv.client.continueTransaction('0');
+          controller.pdv.client.continueTransaction('-1');
           Get.back();
         });
       }
@@ -130,19 +133,21 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
       if (event.event == DataEvents.confirmGoBack) {
         controller.lastMsgCashierCustomer = 'Transação Cancelada';
         Future.delayed(const Duration(seconds: 2), () {
-          controller.pdv.client.continueTransaction('0');
+          controller.pdv.client.continueTransaction('-1');
           Get.back();
         });
       }
 
       if (event.event == DataEvents.pressAnyKey) {
         controller.lastMsgCashierCustomer = event.buffer;
-        Future.delayed(const Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 2), () {
+          controller.pdv.client.continueTransaction('-1');
           Get.back();
         });
       }
 
       if (event.event == DataEvents.abortRequest) {
+        if (!mounted) return;
         setState(() {
           controller.showAbortButton = true;
           if (controller.abortTransaction) {
@@ -219,31 +224,13 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
       }
 
       paymentStream.listen((Transaction transaction) {
+        print(transaction);
+        print('Transaction success = ${transaction.success}');
+        print('Transaction done = ${transaction.done}');
         try {
+          if (!mounted) return;
           setState(() {
-            if (controller.lastMsgCashierCustomer
-                    .toUpperCase()
-                    .contains('APROV'.toUpperCase()) ||
-                controller.lastMsgCashierCustomer
-                    .toUpperCase()
-                    .contains('OK'.toUpperCase()) ||
-                controller.lastMsgCashierCustomer
-                    .toUpperCase()
-                    .contains('Concluida'.toUpperCase()) ||
-                controller.lastMsgCashierCustomer
-                    .toUpperCase()
-                    .contains('sucesso'.toUpperCase()) ||
-                controller.lastMsgCashierCustomer
-                    .toUpperCase()
-                    .contains('bem'.toUpperCase()) ||
-                controller.lastMsgCashierCustomer
-                    .toUpperCase()
-                    .contains('sucedi'.toUpperCase()) ||
-                controller.lastMsgCashierCustomer
-                    .toUpperCase()
-                    .contains('aceit'.toUpperCase()) ||
-                controller.transactionStatus ==
-                    TransactionEvents.transactionConfirm) {
+            if (transaction.success == true) {
               controller.dataReceived.add(controller.pdv
                   .cliSitetRespMap[134]!); //Map com todos os campos retornados
 
@@ -256,9 +243,19 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
                   .add(controller.pdv.cliSiTefResp.viaEstabelecimento);
 
               operacoes();
+            } else {
+              controller.transactionStatus = TransactionEvents.transactionError;
+              controller.pdv.continueTransaction('-1');
+              Get.back();
+              const CustomCherryError(
+                  message: 'Erro na transação, tente novamente!');
             }
           });
         } on Exception catch (e) {
+          if (kDebugMode) {
+            logger.e(e.toString());
+          }
+        } catch (e) {
           if (kDebugMode) {
             logger.e(e.toString());
           }
@@ -275,7 +272,8 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
   }
 
   void operacoes() async {
-    /* var xmlNfce = await PostNfce().postNfce(context, widget.paymentTypeNFCE);
+    clisitefController.setTransaction(true);
+    var xmlNfce = await PostNfce().postNfce(context, widget.paymentTypeNFCE);
     if (xmlNfce.isNotEmpty) {
       for (var i = 0; i < 6; i++) {
         Get.back();
@@ -291,31 +289,31 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
             },
           ),
         );
-      }*/
+      }
 
-    var printCard = await PrintTransactionCard()
-        .printTEF(controller.pdv.cliSiTefResp.viaCliente);
-    while (printCard != true) {
-      await Get.dialog(
-        ComfirmPrint(
-          function: () async {
-            return await PrintTransactionCard()
-                .printTEF(controller.pdv.cliSiTefResp.viaCliente);
-          },
-        ),
-      );
-    }
+      var printCard = await PrintTransactionCard()
+          .printTEF(controller.pdv.cliSiTefResp.viaCliente);
+      while (printCard != true) {
+        await Get.dialog(
+          ComfirmPrint(
+            function: () async {
+              return await PrintTransactionCard()
+                  .printTEF(controller.pdv.cliSiTefResp.viaCliente);
+            },
+          ),
+        );
+      }
 
-    bool printTab = await PrintTab().printTab();
-    while (printTab != true) {
-      printTab = await Get.dialog(
-        ComfirmPrint(
-          function: () async {
-            return await PrintTab().printTab();
-          },
-        ),
-      );
-      //  }
+      bool printTab = await PrintTab().printTab();
+      while (printTab != true) {
+        printTab = await Get.dialog(
+          ComfirmPrint(
+            function: () async {
+              return await PrintTab().printTab();
+            },
+          ),
+        );
+      }
     }
   }
 
@@ -385,13 +383,20 @@ class _CliSiTefExempleState extends State<CliSiTefExemple> {
         padding: EdgeInsets.symmetric(vertical: Get.size.height * 0.05),
         child: SizedBox(
           width: Get.size.width * 0.7,
-          child: /* CashierCustomerWidget()
-              .buildText(controller.lastMsgCashierCustomer),*/
-              Text(
-            controller.lastMsgCashierCustomer,
-            style: CustomTextStyle.textButtonStyleWhite,
-            textAlign: TextAlign.center,
-          ),
+          child: clisitefController.transaction.value == true
+              ? const Column(
+                  children: [
+                    Text("Aguarde a impressão",
+                        style: CustomTextStyle.textButtonStyleWhite,
+                        textAlign: TextAlign.center),
+                    CircularProgressIndicator(),
+                  ],
+                )
+              : Text(
+                  controller.lastMsgCashierCustomer,
+                  style: CustomTextStyle.textButtonStyleWhite,
+                  textAlign: TextAlign.center,
+                ),
         ),
       );
     }

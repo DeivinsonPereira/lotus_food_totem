@@ -35,14 +35,13 @@ class ConfirmPaymentTef {
             .processTefPayment(context, paymentFormatted, valor);
         if (tefText.isNotEmpty) {
           if (paymentFormatted != 'Dinheiro') {
-           // String xmlNfce = ''; // somente em teste, depois apaga e descomenta o PostNfce
-           var xmlNfce = await PostNfce().postNfce(context, paymentFormatted);
+            // String xmlNfce = ''; // somente em teste, depois apaga e descomenta o PostNfce
+            var xmlNfce = await PostNfce().postNfce(context, paymentFormatted);
             if (xmlNfce.isNotEmpty) {
               for (var i = 0; i < 4; i++) {
                 Get.back();
               }
 
-            
               var printXml =
                   await PrintNfceXml().printNfceXml(xmlArgs: xmlNfce);
               while (printXml != true) {
@@ -56,7 +55,7 @@ class ConfirmPaymentTef {
                   ),
                 );
               }
-            
+
               var printCard = await PrintTransactionCard().printTEF(tefText);
               while (printCard != true) {
                 await Get.dialog(
@@ -135,7 +134,8 @@ class ConfirmPaymentTef {
       case 'Voucher':
         paymentFormatted = 5;
         break;
-      
+      case 'PIX':
+        paymentFormatted = 122;
     }
     return paymentFormatted;
   }

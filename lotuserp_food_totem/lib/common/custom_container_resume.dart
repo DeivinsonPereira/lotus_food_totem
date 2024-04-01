@@ -107,7 +107,7 @@ class CustomContainerResume extends StatelessWidget {
         width: size.width,
         height: menuController.isExpanded.value
             ? size.height * 0.5
-            : size.height * 0.06,
+            : size.height * 0.065,
         decoration: const BoxDecoration(
           color: CustomColors.backSlider,
         ),
