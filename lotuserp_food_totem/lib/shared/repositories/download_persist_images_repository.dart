@@ -47,7 +47,7 @@ Future<void> downloadImageSlide(BuildContext context) async {
             break;
           }
           String pathName =
-              '${dir.path}/assets/images/TOTEM_SLIDE${(i + 1)}.PNG';
+              '${dir.path}/assets/images/${('TOTEM_SLIDE${(i + 1)}.PNG').toUpperCase()}';
 
           await Directory('${dir.path}/assets/images').create(recursive: true);
           File file = File(pathName);
@@ -78,7 +78,8 @@ Future<void> downloadImageSlide(BuildContext context) async {
                 .show(context);
           }
         } catch (e) {
-          String pathName = '${dir.path}/assets/images/TOTEM_MARCA_DAGUA.PNG';
+          String pathName =
+              '${dir.path}/assets/images/${('TOTEM_MARCA_DAGUA.PNG').toUpperCase()}';
 
           await Directory('${dir.path}/assets/images').create(recursive: true);
           File file = File(pathName);
@@ -113,7 +114,8 @@ Future<void> downloadImageSlide(BuildContext context) async {
                 .show(context);
           }
         } catch (e) {
-          String pathName = '${dir.path}/assets/images/TOTEM_LOGO_EMPRESA.PNG';
+          String pathName =
+              '${dir.path}/assets/images/${('TOTEM_LOGO_EMPRESA.PNG').toUpperCase()}';
 
           await Directory('${dir.path}/assets/images').create(recursive: true);
           File file = File(pathName);
@@ -138,16 +140,13 @@ Future<void> deleteExistingFiles(String folderPath) async {
   final directory = Directory(folderPath);
   Logger logger = Logger();
   if (await directory.exists()) {
-    // List all files and subdirectories in the directory
     final entities = directory.listSync();
 
     for (final entity in entities) {
       if (entity is File) {
-        // Delete the file
         await entity.delete();
         logger.d('Arquivo excluído: ${entity.path}');
       } else if (entity is Directory) {
-        // Recursively delete subdirectories
         await deleteExistingFiles(entity.path);
       }
     }
